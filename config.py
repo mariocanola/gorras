@@ -1,82 +1,67 @@
 import os
+import sys
+import secrets
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Cargar variables de entorno desde .env
-env_path = Path('.') / '.env'
-load_dotenv(dotenv_path=env_path)
+# Cargar variables de entorno
+env_path = Path(__file__).parent / '.env'
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
 
 class Config:
-    """Configuración base de la aplicación."""
+    """Configuración base compatible con Linux y Windows"""
+    
+    # Directorio base
+    BASE_DIR = Path(__file__).parent.parent
     
     # Configuración de la aplicación
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev-key-para-desarrollo-cambiar-en-produccion')
-    FLASK_ENV = os.getenv('FLASK_ENV', 'development')
-    DEBUG = FLASK_ENV == 'development'
+    SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
+    DEBUG = os.getenv('FLASK_ENV', 'development').lower() in ('1', 'true', 'development')
     
     # Configuración de la base de datos
+    DB_DRIVER = os.getenv('DB_DRIVER', 'mysql+mysqlconnector')
     DB_HOST = os.getenv('DB_HOST', 'localhost')
-    DB_PORT = int(os.getenv('DB_PORT', 3306))
+    DB_PORT = int(os.getenv('DB_PORT', '3306'))
     DB_NAME = os.getenv('DB_NAME', 'gorras_db')
-    DB_USER = os.getenv('DB_USER', 'root')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+    DB_USER = os.getenv('DB_USER', 'cristian')  # Usuario por defecto según tu .env
+    DB_PASSWORD = os.getenv('DB_PASSWORD', '12345')  # Contraseña por defecto según tu .env
+    
+    # Configuración de rutas
+    UPLOAD_FOLDER = str(BASE_DIR / 'static' / 'uploads')
+    
+    # Configuración de la conexión a la base de datos
+    if os.name == 'nt':  # Windows
+        SQLALCHEMY_DATABASE_URI = f"{DB_DRIVER}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    else:  # Linux/Unix
+        # Intentar con socket si existe, de lo contrario usar TCP/IP
+        DB_SOCKET = '/var/run/mysqld/mysqld.sock'  # Ruta típica en Linux
+        if os.path.exists(DB_SOCKET):
+            SQLALCHEMY_DATABASE_URI = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?unix_socket={DB_SOCKET}"
+        else:
+            SQLALCHEMY_DATABASE_URI = f"{DB_DRIVER}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     
     # Configuración de SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = DEBUG  # Mostrar consultas SQL en modo desarrollo
-    
-    # Configuración de seguridad
-    SESSION_COOKIE_SECURE = not DEBUG
-    SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    
-    # Configuración de subida de archivos
-    UPLOAD_FOLDER = os.path.join('static', 'uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload size
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    
-    @staticmethod
-    def init_app(app):
-        """Inicialización de la configuración de la aplicación."""
-        # Crear directorio de subidas si no existe
-        upload_folder = os.path.join(app.root_path, '..', Config.UPLOAD_FOLDER)
-        os.makedirs(upload_folder, exist_ok=True)
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_recycle': 280,
+        'pool_pre_ping': True
+    }
+    SQLALCHEMY_ECHO = DEBUG
 
-
+# Configuración para desarrollo
 class DevelopmentConfig(Config):
-    """Configuración para desarrollo."""
     DEBUG = True
-    SQLALCHEMY_ECHO = True
+    DB_NAME = os.getenv('DB_NAME', 'gorras_dev')
 
-
-class TestingConfig(Config):
-    """Configuración para pruebas."""
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    WTF_CSRF_ENABLED = False
-
-
+# Configuración para producción
 class ProductionConfig(Config):
-    """Configuración para producción."""
     DEBUG = False
-    SESSION_COOKIE_SECURE = True
-    
-    @classmethod
-    def init_app(cls, app):
-        Config.init_app(app)
-        # Aquí podrías añadir configuraciones específicas de producción
-        # como manejo de logs, monitoreo, etc.
+    DB_NAME = os.getenv('DB_NAME', 'gorras_prod')
 
-
-# Configuración por entorno
+# Seleccionar configuración según el entorno
 config = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
 }
-
-# Configuración actual basada en la variable de entorno FLASK_ENV
-current_config = os.getenv('FLASK_ENV', 'development')
-app_config = config.get(current_config, config['default'])
