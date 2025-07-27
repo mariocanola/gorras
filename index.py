@@ -30,24 +30,6 @@ def create_app(config_name=None):
     # Registrar blueprints (rutas)
     register_blueprints(app)
     
-    # Ruta de prueba
-    @app.route('/')
-    def index():
-        return jsonify({
-            'status': 'success',
-            'message': 'API de Gorras en funcionamiento',
-            'version': '1.0.0'
-        })
-    
-    # Ruta de prueba de base de datos
-    @app.route('/test-db', methods=['GET'])
-    def test_db_route():
-        """Ruta para probar la conexión a la base de datos."""
-        test_result = test_db_connection()
-        return jsonify(test_result)
-    
-    return app
-
 def register_blueprints(app):
     """
     Registra los blueprints de la aplicación.
@@ -59,13 +41,3 @@ def register_blueprints(app):
     # from src.routes.gorras import gorras_bp
     # app.register_blueprint(gorras_bp, url_prefix='/api/gorras')
     pass
-
-if __name__ == '__main__':
-    # Crear y ejecutar la aplicación
-    app = create_app()
-    
-    # Configuración del puerto
-    port = int(os.getenv('PORT', 5000))
-    
-    # Iniciar la aplicación
-    app.run(host='0.0.0.0', port=port, debug=app.config.get('DEBUG', False))

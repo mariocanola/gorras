@@ -1,5 +1,4 @@
 import os
-import sys
 import secrets
 from pathlib import Path
 from dotenv import load_dotenv
