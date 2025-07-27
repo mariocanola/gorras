@@ -183,16 +183,13 @@ def init_db(app):
         
         with app.app_context():
             # Importar todos los modelos para que SQLAlchemy los registre
-            from src.models.gorra import Gorra
-            from src.models.detalle_pedido import DetallePedido
-            from src.models.pedido import Pedido
-            from src.models.persona import Persona
-            from src.models.rol import Rol
-            from src.models.tipo_documento import TipoDocumento
-            from src.models.tipo_gorra import TipoGorra
-            from src.models.usuario import Usuario
-            from src.models.variante_gorra import VarianteGorra
-            from src.models.venta import Venta
+            from ..models.tipo_documento import TipoDocumento
+            from ..models.tipo_gorra import TipoGorra
+            from ..models.variante_gorra import VarianteGorra
+            from ..models.rol import Rol
+            from ..models.persona import Persona
+            from ..models.pedido import Pedido
+            from ..models.detalle_pedido import DetallePedido
             
             # Crear todas las tablas definidas en los modelos
             db.create_all()
