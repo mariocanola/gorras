@@ -18,7 +18,7 @@ class Config:
     # Configuración de la aplicación
     SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex(32))
     DEBUG = os.getenv('FLASK_ENV', 'development').lower() in ('1', 'true', 'development')
-    
+
     # Configuración de la base de datos
     DB_DRIVER = os.getenv('DB_DRIVER', 'mysql+mysqlconnector')
     DB_HOST = os.getenv('DB_HOST', 'localhost')
