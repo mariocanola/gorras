@@ -58,4 +58,22 @@
             <p>El acceso a este archivo está monitoreado.</p>
         </footer>
     </div>
+    <div id="product-view" class="hidden"></div>
+
+    <div id="cart-view" class="hidden">
+        <div class="cart-modal">
+            <button class="close-checkout" id="close-cart-btn" title="Cerrar">&times;</button>
+            <h2>Tu Carrito</h2>
+            <div id="cart-login-prompt" class="cart-auth-prompt hidden">
+                <p>¿No tienes cuenta? <a href="#" class="auth-link-trigger">Acceder</a></p>
+            </div>
+            <div id="cart-items-container"></div>
+            <div class="cart-summary">
+                <p>Total: <span id="cart-total">$0</span></p>
+            </div>
+            <div class="cart-actions">
+                <button id="checkout-from-cart-btn" class="checkout-button">Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
 </body>
