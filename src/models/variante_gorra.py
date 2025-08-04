@@ -3,18 +3,19 @@ from sqlalchemy.orm import validates
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 import os
+import logging
 from werkzeug.utils import secure_filename
 
 class VarianteGorra(db.Model):
 	__tablename__ = 'variantes_gorra'
 
 	id_gorra = db.Column(db.Integer, primary_key=True)
+	nombre = db.Column(db.String(100), nullable=False)
 	id_tipo_gorra = db.Column(db.Integer, db.ForeignKey('tipos_gorra.id_tipo_gorra'), nullable=False)
 	color = db.Column(db.String(50), nullable=False)
 	talla = db.Column(db.String(10), nullable=False)
 	precio = db.Column(db.Numeric(10,2), nullable=False)
 	stock = db.Column(db.Integer, nullable=False)
-	activo = db.Column(db.Boolean, default=True)
 	imagen_url = db.Column(db.String(255))
 
 	detalles_pedido = db.relationship('DetallePedido', backref='variante_gorra', lazy=True) 
@@ -32,72 +33,80 @@ class VarianteGorra(db.Model):
 			raise ValueError("El stock no puede ser negativo")
 		return stock
 
+	@validates('nombre')
+	def validate_nombre(self, key, nombre):
+		if not nombre:
+			raise ValueError("El nombre es obligatorio")
+		return nombre
+
 	# Métodos CRUD
 	@classmethod
-	def crear(cls, datos: Dict[str, Any]) -> 'Gorra':
+	def crear(cls, datos: Dict[str, Any]) -> 'VarianteGorra':
 		"""
-		Crea una nueva gorra en la base de datos.
+		Crea una nueva variante de gorra en la base de datos.
 
 		Args:
-			datos: Diccionario con los datos de la gorra
+			datos: Diccionario con los datos de la variante de gorra.
 
 		Returns:
-			Gorra: La gorra creada
+			VarianteGorra: La variante de gorra creada.
 		"""
 		try:
 			# Validar y procesar la imagen si se proporciona
 			if 'imagen' in datos and datos['imagen']:
 				datos['imagen_url'] = cls._guardar_imagen(datos['imagen'])
-				del datos['imagen']
 
-			gorra = cls(**datos)
-			db.session.add(gorra)
+			# Filtrar solo las columnas que existen en el modelo
+			columnas_validas = {k: v for k, v in datos.items() if hasattr(cls, k) and k != 'id_gorra'}
+
+			variante = cls(**columnas_validas)
+			db.session.add(variante)
 			db.session.commit()
-			logger.info(f"Gorra creada exitosamente: {gorra.nombre}")
-			return gorra
+			logging.info(f"Variante de gorra creada exitosamente: ID {variante.id_gorra}")
+			return variante
 		except Exception as e:
 			db.session.rollback()
-			logger.error(f"Error al crear gorra: {str(e)}")
+			logging.error(f"Error al crear la variante de gorra: {str(e)}")
 			raise
 
 	@classmethod
-	def obtener_por_id(cls, id_gorra: int) -> Optional['Gorra']:
+	def obtener_por_id(cls, id_gorra: int) -> Optional['VarianteGorra']:
 		"""
-		Obtiene una gorra por su ID.
+		Obtiene una variante de gorra por su ID.
 
 		Args:
-			id_gorra: ID de la gorra a buscar
+			id_gorra: ID de la variante de gorra a buscar
 
 		Returns:
-			Optional[Gorra]: La gorra encontrada o None si no existe
+			Optional[VarianteGorra]: La variante de gorra encontrada o None si no existe
 		"""
 		return cls.query.get(id_gorra)
 
 	@classmethod
-	def obtener_todas(cls, activas: bool = True) -> List['Gorra']:
+	def obtener_todas(cls, activas: bool = True) -> List['VarianteGorra']:
 		"""
-		Obtiene todas las gorras, opcionalmente solo las activas.
+		Obtiene todas las variantes de gorra, opcionalmente solo las activas.
 
 		Args:
-			activas: Si es True, devuelve solo gorras activas
+			activas: Si es True, devuelve solo variantes de gorra activas
 
 		Returns:
-			List[Gorra]: Lista de gorras
+			List[VarianteGorra]: Lista de variantes de gorra
 		"""
 		query = cls.query
 		if activas:
 			query = query.filter_by(activo=True)
-		return query.order_by(cls.nombre).all()
+		return query.order_by(cls.id_gorra).all()
 
-	def actualizar(self, datos: Dict[str, Any]) -> 'Gorra':
+	def actualizar(self, datos: Dict[str, Any]) -> 'VarianteGorra':
 		"""
-		Actualiza los datos de la gorra.
+		Actualiza los datos de la variante de gorra.
 
 		Args:
 			datos: Diccionario con los datos a actualizar
 
 		Returns:
-			Gorra: La gorra actualizada
+			VarianteGorra: La variante de gorra actualizada
 		"""
 		try:
 			# Actualizar campos
@@ -109,16 +118,16 @@ class VarianteGorra(db.Model):
 			self.fecha_actualizacion = datetime.utcnow()
 
 			db.session.commit()
-			logger.info(f"Gorra actualizada: {self.id_gorra}")
+			logging.info(f"Variante de gorra actualizada: {self.id_gorra}")
 			return self
 		except Exception as e:
 			db.session.rollback()
-			logger.error(f"Error al actualizar gorra {self.id_gorra}: {str(e)}")
+			logging.error(f"Error al actualizar variante de gorra {self.id_gorra}: {str(e)}")
 			raise
 
 	def eliminar(self):
 		"""
-		Elimina la gorra de la base de datos.
+		Elimina la variante de gorra de la base de datos.
 		"""
 		try:
 			# Eliminar la imagen asociada si existe
@@ -127,20 +136,20 @@ class VarianteGorra(db.Model):
 
 			db.session.delete(self)
 			db.session.commit()
-			logger.info(f"Gorra eliminada: {self.id_gorra}")
+			logging.info(f"Variante de gorra eliminada: {self.id_gorra}")
 		except Exception as e:
 			db.session.rollback()
-			logger.error(f"Error al eliminar gorra {self.id_gorra}: {str(e)}")
+			logging.error(f"Error al eliminar variante de gorra {self.id_gorra}: {str(e)}")
 			raise
 
 	def desactivar(self):
 		"""
-		Desactiva la gorra (borrado lógico).
+		Desactiva la variante de gorra (borrado lógico).
 		"""
 		self.activo = False
 		self.fecha_actualizacion = datetime.utcnow()
 		db.session.commit()
-		logger.info(f"Gorra desactivada: {self.id_gorra}")
+		logging.info(f"Variante de gorra desactivada: {self.id_gorra}")
 
 	# Métodos de utilidad para manejo de imágenes
 	@staticmethod
@@ -173,37 +182,36 @@ class VarianteGorra(db.Model):
 		return os.path.join('static', 'uploads', unique_filename)
 
 	def _eliminar_imagen(self):
-		"""Elimina la imagen asociada a la gorra del sistema de archivos."""
+		"""Elimina la imagen asociada a la variante de gorra del sistema de archivos."""
 		if self.imagen_url:
 			try:
 				filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), self.imagen_url)
 				if os.path.exists(filepath):
 					os.remove(filepath)
-					logger.info(f"Imagen eliminada: {filepath}")
+					logging.info(f"Imagen eliminada: {filepath}")
 			except Exception as e:
-				logger.error(f"Error al eliminar imagen {self.imagen_url}: {str(e)}")
+				logging.error(f"Error al eliminar imagen {self.imagen_url}: {str(e)}")
 
 	# Representación del objeto
 	def __repr__(self):
-		return f"<Gorra {self.nombre} (ID: {self.id_gorra})>"
+		return f"<VarianteGorra {self.id_gorra} (ID: {self.id_gorra}, nombre: {self.nombre})>"
 
 	# Método para serializar el objeto a diccionario (útil para APIs)
 	def to_dict(self):
 		"""
-		Convierte el objeto Gorra a un diccionario.
+		Convierte el objeto VarianteGorra a un diccionario.
 
 		Returns:
-			dict: Diccionario con los datos de la gorra
+			dict: Diccionario con los datos de la variante de gorra
 		"""
 		return {
 			'id_gorra': self.id_gorra,
 			'nombre': self.nombre,
-			'descripcion': self.descripcion,
-			'precio': float(self.precio),
+			'id_tipo_gorra': self.id_tipo_gorra,
 			'color': self.color,
+			'talla': self.talla,
+			'precio': float(self.precio),
 			'stock': self.stock,
 			'imagen_url': self.imagen_url,
-			'fecha_creacion': self.fecha_creacion.isoformat(),
-			'fecha_actualizacion': self.fecha_actualizacion.isoformat(),
 			'activo': self.activo
 		}
