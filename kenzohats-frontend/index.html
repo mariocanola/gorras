@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KENZOHATS | Gorras Personalizadas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Source+Code+Pro:wght@400;600&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Source+Code+Pro:wght@400;600&family=Playfair+Display:ital,wght@1,700&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <!-- Archivos para el Calendario Personalizado -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -20,6 +23,7 @@
     <link rel="stylesheet" href="./css/checkout-modal.css">
     <link rel="stylesheet" href="./css/cart.css">
 </head>
+
 <body>
     <div id="main-view">
         <nav id="main-nav">
@@ -27,8 +31,31 @@
                 <a href="#hero">INICIO</a>
                 <a href="#featured-assets">ACTIVOS</a>
                 <a href="#manifesto">CÓDIGO</a>
-                <a href="#" id="history-icon" class="hidden"><div class="hat-logo"></div></a>
-                <a href="#" id="cart-icon"><div class="cart-logo"></div></a>
+                <a href="#" id="history-icon" class="hidden">
+                    <div class="hat-logo"></div>
+                </a>
+                <a href="#" id="cart-icon">
+                    <div class="cart-logo"></div>
+                </a>
             </div>
         </nav>
+        <main id="main-content">
+            <section id="hero">
+                <h1>
+                    <span class="line-wrapper"><span class="line">KÆNZO </span></span>
+                    <span class="line-wrapper"><span class="line">HATS</span></span>
+                </h1>
+                <p>No es una marca. Es una declaración.</p>
+            </section>
+            <section id="featured-assets" class="container"></section>
+            <section id="manifesto">
+                <h2>Nuestro Código</h2>
+                <p id="transcription-text"></p>
+            </section>
+        </main>
+        <footer id="main-footer">
+            <p>&copy; 2025 CÓDICE CLANDESTINO. TODOS LOS DERECHOS RESERVADOS.</p>
+            <p>El acceso a este archivo está monitoreado.</p>
+        </footer>
+    </div>
 </body>
