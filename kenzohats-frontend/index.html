@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KENZOHATS | Gorras Personalizadas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Source+Code+Pro:wght@400;600&family=Playfair+Display:ital,wght@1,700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Archivos para el Calendario Personalizado -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/components/components.css">
+    <link rel="stylesheet" href="./css/checkout-modal.css">
+    <link rel="stylesheet" href="./css/cart.css">
+</head>
+
+<body>
+    <div id="main-view">
+        <nav id="main-nav">
+            <div id="nav-links">
+                <a href="#hero">INICIO</a>
+                <a href="#featured-assets">ACTIVOS</a>
+                <a href="#manifesto">CÓDIGO</a>
+                <a href="#" id="history-icon" class="hidden">
+                    <div class="hat-logo"></div>
+                </a>
+                <a href="#" id="cart-icon">
+                    <div class="cart-logo"></div>
+                </a>
+            </div>
+        </nav>
+        <main id="main-content">
+            <section id="hero">
+                <h1>
+                    <span class="line-wrapper"><span class="line">KÆNZO </span></span>
+                    <span class="line-wrapper"><span class="line">HATS</span></span>
+                </h1>
+                <p>No es una marca. Es una declaración.</p>
+            </section>
+            <section id="featured-assets" class="container"></section>
+            <section id="manifesto">
+                <h2>Nuestro Código</h2>
+                <p id="transcription-text"></p>
+            </section>
+        </main>
+        <footer id="main-footer">
+            <p>&copy; 2025 CÓDICE CLANDESTINO. TODOS LOS DERECHOS RESERVADOS.</p>
+            <p>El acceso a este archivo está monitoreado.</p>
+        </footer>
+    </div>
+    <div id="product-view" class="hidden"></div>
+
+    <div id="cart-view" class="hidden">
+        <div class="cart-modal">
+            <button class="close-checkout" id="close-cart-btn" title="Cerrar">&times;</button>
+            <h2>Tu Carrito</h2>
+            <div id="cart-login-prompt" class="cart-auth-prompt hidden">
+                <p>¿No tienes cuenta? <a href="#" class="auth-link-trigger">Acceder</a></p>
+            </div>
+            <div id="cart-items-container"></div>
+            <div class="cart-summary">
+                <p>Total: <span id="cart-total">$0</span></p>
+            </div>
+            <div class="cart-actions">
+                <button id="checkout-from-cart-btn" class="checkout-button">Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
+    <div id="history-view" class="hidden">
+        <div class="cart-modal">
+            <button class="close-checkout" id="close-history-btn" title="Cerrar">&times;</button>
+            <div id="history-content"></div>
+        </div>
+    </div>
+    <div id="checkout-view" class="hidden">
+        <div class="checkout-modal">
+            <button class="close-checkout" title="Cerrar">&times;</button>
+            <button class="back-checkout hidden" title="Atrás">&#10229;</button>
+            <div id="shipping-step" class="checkout-step hidden">
+                <div class="checkout-modal-header">
+                    <h2>DATOS DE ENTREGA</h2>
+                    <p>Confirme las coordenadas</p>
+                    <p class="auth-link">¿Ya tienes cuenta? <a href="#" id="go-to-login-btn">Acceder</a></p>
+                </div>
+                <form id="shipping-form">
+                    <div class="form-group"><label class="form-label" for="ship-name">Nombres</label><input
+                            class="form-input" type="text" id="ship-name" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-lastname">Apellidos</label><input
+                            class="form-input" type="text" id="ship-lastname" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-email">Correo Electrónico</label><input
+                            class="form-input" type="email" id="ship-email" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-address">Dirección</label><input
+                            class="form-input" type="text" id="ship-address" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-country">País</label><input
+                            class="form-input" type="text" id="ship-country" value="Colombia" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-state">Departamento</label><input
+                            class="form-input" type="text" id="ship-state" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-city">Ciudad</label><input
+                            class="form-input" type="text" id="ship-city" required></div>
+                    <div class="form-group"><label class="form-label" for="ship-zip">Código Postal</label><input
+                            class="form-input" type="text" id="ship-zip"></div>
+                    <div class="form-group"><label class="form-label" for="ship-tel">Teléfono</label><input
+                            class="form-input" type="tel" id="ship-tel" required></div>
+                    <div id="shipping-quantity-group" class="form-group hidden">
+                        <label class="form-label">Cantidad</label>
+                        <div class="quantity-controls form-input-lookalike">
+                            <button type="button" class="quantity-change" data-change="-1">-</button>
+                            <span class="quantity-display" id="shipping-quantity-display">1</span>
+                            <button type="button" class="quantity-change" data-change="1">+</button>
+                        </div>
+                    </div>
+                    <div class="shipping-total-summary">
+                        <p>Inversión de Total: <span id="shipping-total">$0</span></p>
+                    </div>
+                    <button type="submit" class="checkout-button">[ CONTINUAR A ADQUISICIÓN ]</button>
+                </form>
+            </div>
+            <div id="auth-step" class="checkout-step hidden">
+                <div class="checkout-modal-header">
+                    <h2>ACCESO AL PROTOCOLO</h2>
+                    <p>Se requiere identificación</p>
+                </div>
+                <div class="auth-tabs">
+                    <button class="tab-button active" data-tab="login-form">Iniciar Sesión</button>
+                    <button class="tab-button" data-tab="register-form">Registrarse</button>
+                </div>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group"><label class="form-label" for="login-email">Correo o Teléfono</label><input
+                            class="form-input" type="text" id="login-email" required></div>
+                    <div class="form-group"><label class="form-label" for="login-password">Contraseña</label><input
+                            class="form-input" type="password" id="login-password" required></div>
+                    <button type="submit" class="checkout-button">[ VALIDAR IDENTIDAD ]</button>
+                </form>
+                <form id="register-form" class="auth-form hidden">
+                    <div class="form-group"><label class="form-label" for="reg-email">Correo</label><input
+                            class="form-input" type="text" id="reg-email" required></div>
+                    <div class="form-group"><label class="form-label" for="reg-name">Nombre</label><input
+                            class="form-input" type="text" id="reg-name" required></div>
+                    <div class="form-group"><label class="form-label" for="reg-password">Contraseña</label><input
+                            class="form-input" type="password" id="reg-password" required></div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-birthdate">Fecha de Nacimiento</label>
+                        <div class="input-with-icon">
+                            <input class="form-input" type="text" id="reg-birthdate" required
+                                placeholder="Selecciona una fecha...">
+                            <span class="input-icon" id="calendar-icon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group"><label class="form-label" for="reg-age">Edad</label><input
+                            class="form-input" type="text" id="reg-age" placeholder="Se calculará automáticamente"
+                            readonly></div>
+                    <button type="submit" class="checkout-button">[ CREAR EXPEDIENTE ]</button>
+                </form>
+            </div>
+            <div id="payment-step" class="checkout-step hidden">
+                <div class="checkout-modal-header">
+                    <h2>MÉTODO DE PAGO</h2>
+                    <p>Seleccione el canal</p>
+                </div>
+                <form id="payment-form">
+                    <div class="payment-options">
+                        <div class="payment-option selected" data-value="efecty"><span
+                                class="payment-option-label">Efecty (Colombia)</span></div>
+                        <div class="payment-option" data-value="wu"><span class="payment-option-label">Western Union
+                                (Internacional)</span></div>
+                        <div class="payment-option" data-value="card"><span class="payment-option-label">Tarjeta de
+                                Crédito / Débito</span></div>
+                    </div>
+                    <div id="card-details" class="hidden" style="margin-top: 20px;">
+                        <div class="form-group"><label class="form-label" for="card-number">Número de
+                                Tarjeta</label><input class="form-input" type="text" id="card-number"></div>
+                        <div class="form-group"><label class="form-label" for="card-expiry">Expira (MM/AA)</label><input
+                                class="form-input" type="text" id="card-expiry"></div>
+                        <div class="form-group"><label class="form-label" for="card-cvc">CVC</label><input
+                                class="form-input" type="text" id="card-cvc"></div>
+                    </div>
+                    <div id="efecty-details" style="margin-top:20px; font-size: 0.9rem;">
+                        <p>Se generará un código de pago para presentar en cualquier punto Efecty.</p>
+                    </div>
+                    <div id="wu-details" class="hidden" style="margin-top:20px; font-size: 0.9rem;">
+                        <p>Recibirá las instrucciones para el giro por Western Union en su correo.</p>
+                    </div>
+                    <button type="submit" class="checkout-button">[ FINALIZAR ADQUISICIÓN ]</button>
+                </form>
+            </div>
+            <div id="confirmation-step" class="checkout-step hidden">
+                <div class="checkout-modal-header">
+                    <h2>Pago Exitoso</h2>
+                    <p>EL ACTIVO HA SIDO ASEGURADO</p>
+                </div>
+                <p style="text-align:center;">Hemos recibido la orden. Recibirá una notificación de seguimiento.</p>
+                <button class="checkout-button" id="finish-button">[ CERRAR CANAL ]</button>
+            </div>
+        </div>
+    </div>
+    <div id="custom-alert" class="hidden">
+        <div class="cart-modal">
+            <button class="close-checkout" id="close-custom-alert">&times;</button>
+            <h2 id="custom-alert-message"></h2>
+            <div class="cart-actions">
+                <button id="custom-alert-ok" class="checkout-button">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</body>
