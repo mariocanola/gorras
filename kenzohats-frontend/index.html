@@ -135,8 +135,30 @@
                     <button class="tab-button" data-tab="register-form">Registrarse</button>
                 </div>
                 <form id="login-form" class="auth-form">
-                    <div class="form-group"><label class="form-label" for="login-email">Correo o Teléfono</label><input class="form-input" type="text" id="login-email" required></div>
-                    <div class="form-group"><label class="form-label" for="login-password">Contraseña</label><input class="form-input" type="password" id="login-password" required></div>
+                    <div class="form-group"><label class="form-label" for="login-email">Correo o Teléfono</label><input
+                            class="form-input" type="text" id="login-email" required></div>
+                    <div class="form-group"><label class="form-label" for="login-password">Contraseña</label><input
+                            class="form-input" type="password" id="login-password" required></div>
                     <button type="submit" class="checkout-button">[ VALIDAR IDENTIDAD ]</button>
+                </form>
+                <form id="register-form" class="auth-form hidden">
+                    <div class="form-group"><label class="form-label" for="reg-email">Correo</label><input
+                            class="form-input" type="text" id="reg-email" required></div>
+                    <div class="form-group"><label class="form-label" for="reg-name">Nombre</label><input
+                            class="form-input" type="text" id="reg-name" required></div>
+                    <div class="form-group"><label class="form-label" for="reg-password">Contraseña</label><input
+                            class="form-input" type="password" id="reg-password" required></div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-birthdate">Fecha de Nacimiento</label>
+                        <div class="input-with-icon">
+                            <input class="form-input" type="text" id="reg-birthdate" required
+                                placeholder="Selecciona una fecha...">
+                            <span class="input-icon" id="calendar-icon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group"><label class="form-label" for="reg-age">Edad</label><input
+                            class="form-input" type="text" id="reg-age" placeholder="Se calculará automáticamente"
+                            readonly></div>
+                    <button type="submit" class="checkout-button">[ CREAR EXPEDIENTE ]</button>
                 </form>
 </body>
